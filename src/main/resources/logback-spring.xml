@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+	<include resource="org/springframework/boot/logging/logback/console-appender.xml" />
+
+    <appender name="ECSCONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>
+                %d{ISO8601} %-5level trace.id=%X{X-Amzn-Trace-Id:-} [%t] %C{1.}: %msg%n%throwable
+            </Pattern>
+        </layout>
+    </appender>
+
+	<root level="INFO">
+		<appender-ref ref="ECSCONSOLE" />
+	</root>
+    <!-- Use this to find jars scanned for TLD without TLD -->
+	<logger name="org.apache.jasper.servlet.TldScanner" level="DEBUG"/>
+</configuration>

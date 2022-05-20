@@ -1,0 +1,24 @@
+branch: master
+compact: true
+download-external-modules: false
+evaluate-variables: true
+external-modules-download-path: .external_modules
+framework:
+- all
+output:
+- junitxml
+quiet: true
+soft-fail: true
+skip-check:
+  - CKV_DOCKER_2
+  - CKV_AWS_65
+  - CKV_AWS_91
+  - CKV_AWS_131
+  - CKV_AWS_103
+  - CKV_AWS_2
+  - CKV_AWS_158
+  - CKV_AWS_163
+  - CKV_AWS_51
+  - CKV_AWS_23
+  - CKV_AWS_18
+  - CKV_AWS_26
