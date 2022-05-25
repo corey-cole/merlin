@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  shell: bash
+  git-credential-helper: yes
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto11.x
+
+  pre_build:
+    commands:
+      - export COMMIT_HASH=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}
+      - DATE=$(date "+%Y.%m.%d.%T")
+      - sed -i "s/%REPLACE_COMMIT_HASH%/${COMMIT_HASH}/g" src/main/webapp/WEB-INF/jsp/index.jsp
+      - sed -i "s/%DATE%/${DATE}/g" src/main/webapp/WEB-INF/jsp/index.jsp
+  build:
+    commands:
+      - echo Build started on `date`
+      - mvn -q package
+
+artifacts:
+  files:
+    - target/cougar-svc.war
+
+reports:
+  test-reports:
+    files:
+      - '**/*'
+    base-directory: 'target/surefire-reports'
+  coverage-reports:
+    files:
+      - 'target/site/jacoco/jacoco.xml'
+    file-format: 'JACOCOXML'
+
+cache:
+  paths:
+    - '/root/.m2/**/*'

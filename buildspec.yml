@@ -1,0 +1,39 @@
+version: 0.2
+
+env:
+  shell: bash
+
+batch:
+  fast-fail: true
+  build-graph:
+    - identifier: guardrails
+      buildspec: iac/codebuild/buildspec-guardrail.yaml
+      ignore-failure: true
+    - identifier: buildandtest
+      buildspec: iac/codebuild/buildspec-ci.yaml
+      ignore-failure: false
+    - identifier: dockerize
+      env:
+        privileged-mode: true
+      buildspec: iac/codebuild/buildspec-container.yaml
+      depend-on:
+        - buildandtest
+    - identifier: deploy_manifest
+      depend-on:
+        - dockerize
+
+# The pattern for accessing artifacts from other build is:
+# CODEBUILD_SRC_DIR_{identifier}_{artifact name}
+# If no name is given to the artifact, then it uses the name provided in the CodeBuild definition
+phases:
+  build:
+    commands:
+      - cp ${CODEBUILD_SRC_DIR_dockerize_SvcWarFile}/imageDetail.json .
+
+# The output of buildandtest is at buildandtest-build.zip
+# The output of dockerize is at dockerize-build.zip
+# The guardrails step has no artifacts and is not represented in S3
+artifacts:
+  files:
+    - 'iac/codedeploy/*'
+    - imageDetail.json

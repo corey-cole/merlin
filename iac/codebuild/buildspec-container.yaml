@@ -1,0 +1,44 @@
+version: 0.2
+
+env:
+  shell: bash
+  variables:
+    ARTIFACTORY_SERVER: replace-me-with-your-own-artifactory.jfrog.io
+    REPOSITORY_NAME: av-dte-cougar
+    REPOSITORY_BASE_URI: replace-me-with-your-own-artifactory.jfrog.io/av-dte-docker
+  secrets-manager:
+    ARTIFACTORY_USER: Artifactory:Username
+    ARTIFACTORY_PASSWORD: Artifactory:Password
+  exported-variables:
+    - IMAGE_TAG
+
+phases:
+  pre_build:
+    on-failure: ABORT
+    commands:
+      - echo Logging in to Artifactory
+      - echo ${ARTIFACTORY_PASSWORD} | docker login ${ARTIFACTORY_SERVER} -u ${ARTIFACTORY_USER} --password-stdin
+      - export IMAGE_TAG=${CODEBUILD_RESOLVED_SOURCE_VERSION:0:7}
+      - test -z "${IMAGE_TAG}" && exit 1 || echo "IMAGE_TAG not empty"
+      # If the CodeBuild env value is empty, then it will try to recursively copy the current directory
+      - test -z "${CODEBUILD_SRC_DIR_buildandtest_SvcWarFile}" && exit 1 || echo "Found software artifact"
+      - cp -r ${CODEBUILD_SRC_DIR_buildandtest_SvcWarFile}/* .
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build --tag ${REPOSITORY_BASE_URI}/${REPOSITORY_NAME}:${IMAGE_TAG} .
+  post_build:
+    on-failure: ABORT
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker tag ${REPOSITORY_BASE_URI}/${REPOSITORY_NAME}:${IMAGE_TAG} ${REPOSITORY_BASE_URI}/${REPOSITORY_NAME}:development
+      - export IMAGE_URI="${REPOSITORY_BASE_URI}/${REPOSITORY_NAME}:${IMAGE_TAG}"
+      - docker push --quiet ${IMAGE_URI}
+      - docker push --quiet ${REPOSITORY_BASE_URI}/${REPOSITORY_NAME}:development
+      # https://docs.aws.amazon.com/codepipeline/latest/userguide/file-reference.html
+      - printf '{"ImageURI":"%s"}' ${IMAGE_URI} > imageDetail.json
+
+artifacts:
+  files:
+    - imageDetail.json

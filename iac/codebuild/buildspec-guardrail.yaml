@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.x
+    commands:
+      - pip3 install -q checkov
+  build:
+    on-failure: CONTINUE
+    commands:
+      - mkdir -p target/checkov
+      - checkov -d iac/ > target/checkov/cloudformation.xml
+      - checkov -f Dockerfile > target/checkov/dockerfile.xml
+
+reports:
+  iac-reports:
+    files:
+      - 'dockerfile.xml'
+      - 'cloudformation.xml'
+    base-directory: 'target/checkov'
+
+cache:
+  paths:
+    - '/root/.cache/pip/**/*'
