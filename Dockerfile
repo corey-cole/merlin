@@ -13,7 +13,7 @@ COPY ${JAR_FILE} application.war
 RUN java -Djarmode=layertools -jar application.war extract
 
 FROM public.ecr.aws/docker/library/amazoncorretto:8-alpine-jre
-ENV NEW_RELIC_APP_NAME="jester-app"
+ENV NEW_RELIC_APP_NAME="merlin-app"
 
 # As with downloading/extracting NR in the builder, this is something that would be set up in the
 # base image.
