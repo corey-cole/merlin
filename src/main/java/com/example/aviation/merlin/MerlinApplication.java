@@ -1,5 +1,7 @@
 package com.example.aviation.merlin;
 
+import javax.servlet.Filter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
@@ -8,10 +10,17 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
+
 @SpringBootApplication
 public class MerlinApplication {
 
 	final Logger logger = LoggerFactory.getLogger(MerlinApplication.class);
+
+	@Bean
+	public Filter TracingFilter() {
+		return new AWSXRayServletFilter("merlin");
+	}
 
 	public static void main(String[] args) {
 		// This is easier than fiddling with .security files in the image
