@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>com.newrelic.agent.java</groupId>
 			<artifactId>newrelic-api</artifactId>
-			<version>7.5.0</version>
+			<version>8.0.1</version>
 		</dependency>
 		<dependency>
 				<groupId>com.amazonaws</groupId>
