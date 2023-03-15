@@ -1,0 +1,12 @@
+{
+    "serviceName": "merlin",
+    "contextMissingStrategy": "IGNORE_ERROR",
+    "daemonAddress": "127.0.0.1:2000",
+    "tracingEnabled": true,
+    "samplingStrategy": "ALL",
+    "maxStackTraceLength": 50,
+    "streamingThreshold": 100,
+    "traceIdInjection": true,
+    "pluginsEnabled": true,
+    "collectSqlQueries": false
+}
