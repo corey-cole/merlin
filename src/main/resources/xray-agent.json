@@ -1,5 +1,5 @@
 {
-    "serviceName": "merline",
+    "serviceName": "merlin",
     "contextMissingStrategy": "IGNORE_ERROR",
     "daemonAddress": "127.0.0.1:2000",
     "tracingEnabled": true,
