@@ -10,12 +10,21 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 
+import com.amazonaws.xray.AWSXRay;
+import com.amazonaws.xray.AWSXRayRecorderBuilder;
 import com.amazonaws.xray.javax.servlet.AWSXRayServletFilter;
+import com.amazonaws.xray.plugins.EC2Plugin;
 
 @SpringBootApplication
 public class MerlinApplication {
 
 	final Logger logger = LoggerFactory.getLogger(MerlinApplication.class);
+
+	static {
+		// Use a static block to configure X-Ray to match public documentation
+		AWSXRayRecorderBuilder builder = AWSXRayRecorderBuilder.standard().withPlugin(new EC2Plugin());
+		AWSXRay.setGlobalRecorder(builder.build());
+	}
 
 	@Bean
 	public Filter XrayTracingFilter() {
