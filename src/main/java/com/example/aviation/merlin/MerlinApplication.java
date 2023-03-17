@@ -18,7 +18,7 @@ public class MerlinApplication {
 	final Logger logger = LoggerFactory.getLogger(MerlinApplication.class);
 
 	@Bean
-	public Filter TracingFilter() {
+	public Filter XrayTracingFilter() {
 		return new AWSXRayServletFilter("merlin");
 	}
 
